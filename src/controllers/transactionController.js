@@ -2,8 +2,20 @@ import { sql } from "../config/db.js";
 
 export async function getTransactionByUserId(req, res) {
   try {
+    const { userId } = req.params;
+    const transactions =
+      await sql`SELECT * FROM transactions WHERE user_id = ${userId} ORDER BY created_at DESC`;
+    res.status(200).json(transactions[0]);
+  } catch (error) {
+    console.log("Error fetching transactions", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+// This function handles the creation of a new transaction for a user.
+export async function createTransaction(req, res) {
+  try {
     const { title, amount, category, user_id } = req.body;
-    if (!title || amount === undefined || !category || !user_id) {
+    if (!title || !user_id || !category || !amount === undefined) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -14,18 +26,6 @@ export async function getTransactionByUserId(req, res) {
   } catch (err) {
     console.log("Error creating transaction", err);
     res.status(500).json({ message: "Internal Error" });
-  }
-}
-// This function handles the creation of a new transaction for a user.
-export async function createTransaction(req, res) {
-  try {
-    const { userId } = req.params;
-    const transactions =
-      await sql`SELECT * FROM transactions WHERE user_id = ${userId} ORDER BY created_at DESC`;
-    res.status(200).json(transactions[0]);
-  } catch (error) {
-    console.log("Error fetching transactions", error);
-    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
