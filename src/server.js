@@ -17,8 +17,7 @@ app.use(express.json());
 app.use("/api/transactions", router);
 
 app.get("/api/health", (req, res) => {
-  res.send("its working");
-  res.status(200).json({ status: "ok" });
+  res.status(200).json({ status: "ok" }); // Only send one response
 });
 
 initDB().then(() => {

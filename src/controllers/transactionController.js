@@ -5,7 +5,7 @@ export async function getTransactionByUserId(req, res) {
     const { userId } = req.params;
     const transactions =
       await sql`SELECT * FROM transactions WHERE user_id = ${userId} ORDER BY created_at DESC`;
-    res.status(200).json(transactions[0]);
+    res.status(200).json(transactions); // Return all transactions, not just the first
   } catch (error) {
     console.log("Error fetching transactions", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -15,7 +15,7 @@ export async function getTransactionByUserId(req, res) {
 export async function createTransaction(req, res) {
   try {
     const { title, amount, category, user_id } = req.body;
-    if (!title || !user_id || !category || !amount === undefined) {
+    if (!title || !user_id || !category || amount === undefined) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
